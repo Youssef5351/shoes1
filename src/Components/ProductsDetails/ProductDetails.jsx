@@ -19,15 +19,12 @@ const ProductDetail = () => {
     const fetchProductDetails = async () => {
       setLoading(true);
       setError(null);
-
       try {
         const response = await axiosInstance.get(`http://localhost:8000/api/products/${id}`, {
           headers: {
-            'X-Shopify-Access-Token': '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',
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         });
-
         const productData = response.data.product || response.data;
         console.log('Processed Product Data:', productData);
 
