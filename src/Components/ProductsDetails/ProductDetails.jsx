@@ -15,44 +15,51 @@ const ProductDetail = () => {
   const { addToCart, openCart } = useContext(CartContext);
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
-  useEffect(() => {
-    const fetchProductDetails = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await axiosInstance.get(`https://shoes1-omega.vercel.app/api/products/${id}`, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        const productData = response.data.product || response.data;
-        console.log('Processed Product Data:', productData);
+useEffect(() => {
+  const fetchProductDetails = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axiosInstance.get(`https://shoes1-omega.vercel.app/api/products/${id}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      // Log the entire response to understand its structure
+      console.log('Full API Response:', response.data);
 
-        const processedImages = Array.isArray(productData.images)
-  ? productData.images.map(image => ({
-      id: image.id,
-      src: image.src || `https://via.placeholder.com/400?text=Image+${image.id}`,
-      alt: image.alt || productData.title
-    }))
-  : [];
+      const productData = response.data.product || response.data;
 
-        const enhancedProduct = {
-          ...productData,
-          images: processedImages
-        };
+      // Add more robust validation
+      const processedProduct = {
+        ...productData,
+        images: Array.isArray(productData.images)
+          ? productData.images.map(image => ({
+              id: image.id || Math.random().toString(),
+              src: image.src || 'https://via.placeholder.com/400',
+              alt: image.alt || productData.title
+            }))
+          : [{ src: 'https://via.placeholder.com/400', alt: 'Product Image' }],
+        variants: Array.isArray(productData.variants) && productData.variants.length > 0
+          ? productData.variants
+          : [{ id: 'default', price: 0 }],
+        title: productData.title || 'Untitled Product',
+        body_html: productData.body_html || '',
+      };
 
-        setProduct(enhancedProduct);
-        setSelectedImage(enhancedProduct.images?.[0]?.src || 'https://via.placeholder.com/400');
-        setLoading(false);
-      } catch (error) {
-        console.error('Detailed Error:', error);
-        setError(`Failed to load product details: ${error.message}`);
-        setLoading(false);
-      }
-    };
+      setProduct(processedProduct);
+      setSelectedImage(processedProduct.images[0].src);
+      setLoading(false);
+    } catch (error) {
+      console.error('Detailed Error:', error);
+      setError(`Failed to load product details: ${error.message}`);
+      setLoading(false);
+    }
+  };
 
-    fetchProductDetails();
-  }, [id]);
+  fetchProductDetails();
+}, [id]);
 
   const handleAddToCart = () => {
     if (!product || !product.variants || product.variants.length === 0) {
