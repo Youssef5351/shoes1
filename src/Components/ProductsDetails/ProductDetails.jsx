@@ -28,11 +28,13 @@ const ProductDetail = () => {
         const productData = response.data.product || response.data;
         console.log('Processed Product Data:', productData);
 
-        const processedImages = productData.images.map(image => ({
-          id: image.id,
-          src: image.src || `https://via.placeholder.com/400?text=Image+${image.id}`,
-          alt: image.alt || productData.title
-        }));
+        const processedImages = Array.isArray(productData.images)
+  ? productData.images.map(image => ({
+      id: image.id,
+      src: image.src || `https://via.placeholder.com/400?text=Image+${image.id}`,
+      alt: image.alt || productData.title
+    }))
+  : [];
 
         const enhancedProduct = {
           ...productData,
