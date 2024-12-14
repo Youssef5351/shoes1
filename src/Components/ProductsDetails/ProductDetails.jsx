@@ -32,6 +32,20 @@ useEffect(() => {
       const productData = response.data.product || response.data;
 
       // Add more robust validation
+
+      const processedImages = Array.isArray(productData.images)
+  ? productData.images.map(image => ({
+      id: image.id || Math.random().toString(),
+      src: image.src || 
+           `https://cdn.shopify.com/s/files/1/0674/5099/4887/files/${image.filename}?v=${Date.now()}` || 
+           'https://via.placeholder.com/400',
+      alt: image.alt || image.altText || product.title
+    }))
+  : [{ 
+      src: 'https://cdn.shopify.com/s/files/1/0674/5099/4887/files/JORDAN3.webp', 
+      alt: 'Product Image' 
+    }];
+      
       const processedProduct = {
         ...productData,
         images: Array.isArray(productData.images)
