@@ -20,7 +20,7 @@ const ProductDetail = () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await axiosInstance.get(`http://localhost:8000/api/products/${id}`, {
+        const response = await axiosInstance.get(`https://shoes1-omega.vercel.app/api/products/${id}`, {
           headers: {
             'Content-Type': 'application/json',
           },
